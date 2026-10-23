@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { useClickOutside } from '../lib/use-click-outside'
+import { useEscapeKey } from '../lib/use-escape-key'
 import { usePopoverPosition } from '../lib/use-popover-position'
 import { renderTrigger } from '../lib/as-child'
 
@@ -49,16 +50,23 @@ export function DropdownMenu({ trigger, items, asChild = false }: DropdownMenuPr
   const itemRefs = useRef<Record<number, HTMLButtonElement | null>>({})
 
   useClickOutside([triggerRef, menuRef], () => setOpen(false))
+  useEscapeKey(open, () => close())
   const position = usePopoverPosition(triggerRef, open, MENU_WIDTH, items.length * MENU_HEIGHT_ESTIMATE)
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
+  // Foca o primeiro item no mesmo commit em que o menu aparece. Com um
+  // setTimeout, uma tecla pressionada logo depois do clique ainda caía no
+  // gatilho, fora do onKeyDown do menu portado.
+  useLayoutEffect(() => {
+    if (open) itemRefs.current[0]?.focus()
+  }, [open])
+
   function openMenu() {
     setOpen(true)
     setHighlighted(0)
-    setTimeout(() => itemRefs.current[0]?.focus(), 0)
   }
 
   function close(returnFocus = true) {
@@ -67,10 +75,7 @@ export function DropdownMenu({ trigger, items, asChild = false }: DropdownMenuPr
   }
 
   function handleMenuKeyDown(e: React.KeyboardEvent) {
-    if (e.key === 'Escape') {
-      e.preventDefault()
-      close()
-    } else if (e.key === 'ArrowDown') {
+    if (e.key === 'ArrowDown') {
       e.preventDefault()
       const next = (highlighted + 1) % items.length
       setHighlighted(next)

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useRef, useEffect, useId } from 'react'
+import { useState, useMemo, useRef, useEffect, useLayoutEffect, useId } from 'react'
 import { ChevronDownIcon } from './icons'
 import { normalizeText } from '../lib/normalize-text'
 import { useClickOutside } from '../lib/use-click-outside'
@@ -62,9 +62,15 @@ export function MultiSelect({ options, value, onChange, placeholder, label, aria
     setQuery('')
   }
 
+  // Foca a busca no mesmo commit em que o painel abre. Com um setTimeout,
+  // o timer podia disparar depois de uma tecla já ter movido o foco e
+  // puxá-lo de volta pra busca.
+  useLayoutEffect(() => {
+    if (open) inputRef.current?.focus()
+  }, [open])
+
   function openMenu() {
     setOpen(true)
-    setTimeout(() => inputRef.current?.focus(), 0)
   }
 
   useClickOutside(containerRef, close)

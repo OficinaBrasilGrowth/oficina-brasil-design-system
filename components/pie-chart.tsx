@@ -34,30 +34,33 @@ export function PieChart({
 }: PieChartProps) {
   return (
     <div>
-      <ResponsiveContainer width="100%" height={height}>
-        <RechartsPieChart>
-          <Tooltip
-            contentStyle={{ backgroundColor: 'var(--popover)', borderColor: 'var(--border)', borderRadius: 8, fontSize: 13 }}
-            labelStyle={{ color: 'var(--popover-foreground)' }}
-          />
-          <Legend wrapperStyle={{ fontSize: 12 }} />
-          <Pie
-            data={data}
-            nameKey={nameKey}
-            dataKey={valueKey}
-            cx="50%"
-            cy="50%"
-            outerRadius="76%"
-            innerRadius={innerRadius}
-            paddingAngle={2}
-            isAnimationActive={isAnimationActive}
-          >
-            {data.map((entry, index) => (
-              <Cell key={`${entry[nameKey]}-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
-            ))}
-          </Pie>
-        </RechartsPieChart>
-      </ResponsiveContainer>
+      <div aria-hidden="true">
+        <ResponsiveContainer width="100%" height={height}>
+          <RechartsPieChart>
+            <Tooltip
+              contentStyle={{ backgroundColor: 'var(--popover)', borderColor: 'var(--border)', borderRadius: 8, fontSize: 13 }}
+              labelStyle={{ color: 'var(--popover-foreground)' }}
+            />
+            <Legend wrapperStyle={{ fontSize: 12 }} />
+            <Pie
+              data={data}
+              nameKey={nameKey}
+              dataKey={valueKey}
+              cx="50%"
+              cy="50%"
+              outerRadius="76%"
+              innerRadius={innerRadius}
+              paddingAngle={2}
+              isAnimationActive={isAnimationActive}
+              rootTabIndex={-1}
+            >
+              {data.map((entry, index) => (
+                <Cell key={`${entry[nameKey]}-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+              ))}
+            </Pie>
+          </RechartsPieChart>
+        </ResponsiveContainer>
+      </div>
       <table className="sr-only">
         <caption>{title ?? 'Dados do gráfico'}</caption>
         <thead>

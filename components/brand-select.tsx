@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useRef, useEffect, useId } from 'react'
+import { useState, useMemo, useRef, useEffect, useLayoutEffect, useId } from 'react'
 import { ChevronDownIcon } from './icons'
 import { normalizeText } from '../lib/normalize-text'
 import { useClickOutside } from '../lib/use-click-outside'
@@ -67,12 +67,18 @@ export function BrandSelect({ options, value, onChange, placeholder }: BrandSele
     setHighlighted(0)
   }, [query, open])
 
+  // Foca a busca no mesmo commit em que o painel abre. Com um setTimeout,
+  // o timer podia disparar depois de um Shift+Tab e puxar o foco de volta
+  // pra busca, tirando-o do botão "Limpar seleção".
+  useLayoutEffect(() => {
+    if (open) inputRef.current?.focus()
+  }, [open])
+
   // Todo caminho de abrir usa openMenu(), todo caminho de fechar sem
   // selecionar usa close() — evita os dois ficarem dessincronizados
   // (ex: um caminho de fechamento limpando a busca e outro não).
   function openMenu() {
     setOpen(true)
-    setTimeout(() => inputRef.current?.focus(), 0)
   }
 
   // Enter/Espaço só abrem quando o Select está FECHADO — o campo de

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { useClickOutside } from '../lib/use-click-outside'
 import { useEscapeKey } from '../lib/use-escape-key'
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from './icons'
@@ -137,7 +137,9 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
 
   // Mantém os campos de texto sincronizados sempre que o rascunho muda via
   // o calendário ou um preset — pra digitar e clicar nunca ficarem em desacordo.
-  useEffect(() => {
+  // useLayoutEffect, não useEffect: o efeito passivo rodava uma task depois
+  // do render, deixando o calendário já com o intervalo e os campos vazios.
+  useLayoutEffect(() => {
     setStartText(draft.start ? formatDate(draft.start) : '')
     setEndText(draft.end ? formatDate(draft.end) : '')
   }, [draft])
