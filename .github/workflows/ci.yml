@@ -1,0 +1,74 @@
+name: CI
+
+"on":
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  typecheck-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.9'
+          cache: 'npm'
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Typecheck da biblioteca
+        run: npm run typecheck:lib
+
+      - name: Verificar exports do pacote
+        run: npm run verify:exports
+
+      - name: Verificar imports portáveis
+        run: npm run verify:portable
+
+      - name: Verificar fonte única de tokens
+        run: npm run verify:tokens
+
+      - name: Build de produção
+        run: npm run build
+
+      - name: Build da biblioteca
+        run: npm run build:lib
+
+      - name: Verificar build da biblioteca
+        run: npm run verify:lib
+
+      - name: Verificar pacote
+        run: npm run verify:pack
+
+      - name: Cache dos browsers do Playwright
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-browsers-${{ hashFiles('package-lock.json') }}
+
+      - name: Instalar browsers do Playwright
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Instalar dependências de sistema do Playwright
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      - name: Testes funcionais e acessibilidade
+        run: npm run test:functional
+
+      - name: Testes de dark mode
+        run: npm run test:dark-mode
+
+      - name: Regressão visual
+        run: npm run test:visual
