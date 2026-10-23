@@ -70,5 +70,25 @@ jobs:
       - name: Testes de dark mode
         run: npm run test:dark-mode
 
+  # Roda no mesmo container usado pra gerar as imagens de referência —
+  # direto no ubuntu-latest as fontes renderizam diferente e todas as
+  # páginas divergem alguns por cento.
+  visual-regression:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.1-noble
+      options: --user 1001
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Instalar dependências
+        run: npm ci
+
+      # Com CI definido, o webServer do playwright.config.ts só roda
+      # `npm run start` e espera o build já feito.
+      - name: Build de produção
+        run: npm run build
+
       - name: Regressão visual
         run: npm run test:visual

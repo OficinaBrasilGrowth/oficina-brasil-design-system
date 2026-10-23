@@ -8,16 +8,14 @@ test.describe('Button', () => {
     await page.goto('/style-guides/components/button')
     const btn = page.getByRole('button', { name: 'Primary', exact: true })
     await btn.focus()
-    const shadow = await btn.evaluate((el) => getComputedStyle(el).boxShadow)
-    expect(shadow).not.toBe('none')
+    await expect(btn).toHaveCSS('box-shadow', /24, 50, 138/)
   })
 
   test('anel de foco do destructive é vermelho, não azul', async ({ page }) => {
     await page.goto('/style-guides/components/button')
     const btn = page.getByRole('button', { name: 'Destructive' })
     await btn.focus()
-    const shadow = await btn.evaluate((el) => getComputedStyle(el).boxShadow)
-    expect(shadow).toContain('209, 67, 67')
+    await expect(btn).toHaveCSS('box-shadow', /209, 67, 67/)
   })
 
   test('botão desabilitado tem o atributo disabled real, não simulado', async ({ page }) => {

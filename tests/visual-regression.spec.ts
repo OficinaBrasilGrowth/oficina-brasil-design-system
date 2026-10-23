@@ -19,18 +19,14 @@ import { test, expect } from '@playwright/test'
 // visual no futuro, a solução certa é mockar a data do sistema no teste,
 // não incluir a página como está.
 
-// LIMITAÇÃO CONHECIDA (2): as imagens de referência deste arquivo foram
-// geradas no Chromium deste sandbox de desenvolvimento
-// (/home/claude/.cache/puppeteer/chrome/...), não pelo
-// `npx playwright install chromium` que o workflow do CI realmente usa —
-// os dois podem ser builds ligeiramente diferentes do Chromium, com
-// possíveis diferenças sutis de anti-aliasing/renderização de fonte. Isso
-// significa que a primeira rodada real no GitHub Actions pode falhar por
-// diferença de ambiente, não por bug de verdade — nesse caso, a ação
-// certa é regenerar as imagens de referência RODANDO NO PRÓPRIO CI
-// (`npx playwright test --update-snapshots` como job manual), não simplesmente
-// aumentar a tolerância de novo. Sinalizado aqui porque não dá pra
-// verificar isso sem acesso ao CI real.
+// LIMITAÇÃO CONHECIDA (2): as imagens de referência deste arquivo são
+// geradas no container mcr.microsoft.com/playwright:v1.62.1-noble em
+// linux/amd64 — o mesmo ambiente do job visual-regression do CI. Fora
+// dele (macOS, outra arquitetura, ou direto no ubuntu-latest) a
+// renderização de fonte muda alguns por cento e todas as páginas
+// divergem sem nenhum bug real. Pra regenerar, rode a suíte com
+// `--update-snapshots` dentro desse container e plataforma, nunca
+// aumentando a tolerância.
 
 const paginas = [
   '/style-guides',
@@ -88,6 +84,13 @@ const paginas = [
 
 for (const pagina of paginas) {
   test(`regressão visual: ${pagina}`, async ({ page }) => {
+    // A comparação incorpora um embed ao vivo do Figma ("Edited N hours
+    // ago", miniatura do arquivo), que muda com o tempo e depende da rede.
+    // Bloqueado antes do goto e mascarado no screenshot.
+    const ehComparison = pagina === '/style-guides/comparison'
+    if (ehComparison) {
+      await page.route(/^https:\/\/([a-z0-9-]+\.)*figma\.com\//, (route) => route.abort())
+    }
     await page.goto(pagina)
     await page.waitForLoadState('networkidle')
     // maxDiffPixelRatio calibrado com um bug real, não um palpite: uma
@@ -102,6 +105,7 @@ for (const pagina of paginas) {
       fullPage: true,
       animations: 'disabled',
       maxDiffPixelRatio: 0.0005,
+      mask: ehComparison ? [page.locator('iframe[src^="https://www.figma.com/"]')] : [],
     })
   })
 }
