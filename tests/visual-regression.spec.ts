@@ -88,6 +88,13 @@ const paginas = [
 
 for (const pagina of paginas) {
   test(`regressão visual: ${pagina}`, async ({ page }) => {
+    // A comparação incorpora um embed ao vivo do Figma ("Edited N hours
+    // ago", miniatura do arquivo), que muda com o tempo e depende da rede.
+    // Bloqueado antes do goto e mascarado no screenshot.
+    const ehComparison = pagina === '/style-guides/comparison'
+    if (ehComparison) {
+      await page.route(/^https:\/\/([a-z0-9-]+\.)*figma\.com\//, (route) => route.abort())
+    }
     await page.goto(pagina)
     await page.waitForLoadState('networkidle')
     // maxDiffPixelRatio calibrado com um bug real, não um palpite: uma
@@ -102,6 +109,7 @@ for (const pagina of paginas) {
       fullPage: true,
       animations: 'disabled',
       maxDiffPixelRatio: 0.0005,
+      mask: ehComparison ? [page.locator('iframe[src^="https://www.figma.com/"]')] : [],
     })
   })
 }
