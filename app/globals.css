@@ -71,7 +71,8 @@
   --focus-ring-destructive: 0 0 0 3px rgba(209, 67, 67, 0.12);
 
   /* === STAT INDICATOR (StatComparison) === */
-  --stat-positive: #008073;
+  /* Mesmo valor de --success-surface (4,6:1 sobre o card branco). */
+  --stat-positive: #008476;
 
   /* === BORDERS & INPUTS ===
      Confirmed by design (Aug 2026): subtle azulEscuro tint (Option B). */

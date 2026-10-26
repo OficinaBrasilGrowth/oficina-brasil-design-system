@@ -10,8 +10,9 @@ import { ChevronRightIcon } from './icons'
 // secundário" nos tokens (lib/tokens.ts) e evita saturar o verde fora do
 // contexto que o guia pretendia pra ele.
 //
-// A turquesa usada como cor "positiva" (#008073, versão escurecida do
-// token original) mede 4.84:1 de contraste sobre fundo branco/card —
+// A turquesa usada como cor "positiva" (#008476, versão escurecida do
+// token original e mesmo valor de --success-surface) mede 4.6:1 de
+// contraste sobre fundo branco/card —
 // escurecida o suficiente da turquesa base (#00B7A4, que mediria só
 // 2.53:1) pra ler como texto pequeno, mantendo a mesma tonalidade
 // perceptualmente.

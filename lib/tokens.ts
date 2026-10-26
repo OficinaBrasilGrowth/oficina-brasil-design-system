@@ -60,7 +60,7 @@ export const darkMode = {
   cardDark: '#122568',              // fundo de card/popover no dark mode — navy levemente mais claro que azulEscuro
   borderDark: '#233B62',            // borda/input no dark mode
   mutedForegroundDark: '#9AA1AC',   // texto secundário no dark mode
-  statPositiveLight: '#008073',     // turquesa escurecida (StatComparison, light mode)
+  statPositiveLight: '#008476',     // turquesa escurecida (StatComparison, light mode)
   statPositiveDark: '#4CA69D',      // turquesa escurecida pro dark mode — mesmo motivo, contraste contra --card escuro
   destructiveDark: '#DF7B7B',       // destructive clareado pro dark mode
   destructiveSubtleDark: '#3F1414', // vermelho escurecido em direção ao preto — fundo "subtle" do Alert no dark mode, a tinta clara do light mode ficaria deslocada visualmente

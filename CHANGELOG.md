@@ -1,5 +1,9 @@
 # Changelog
 
+## Não lançado
+
+- stat-positive (tema claro) unificado com success-surface: #008073 → #008476
+
 ## 1.0.0-rc.2
 
 ### Incluído
