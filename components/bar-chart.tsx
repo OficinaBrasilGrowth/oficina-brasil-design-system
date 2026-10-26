@@ -53,7 +53,11 @@ export function BarChart({ data, categoryKey, series, height = 280, layout = 've
           <YAxis
             type={horizontal ? 'category' : 'number'}
             dataKey={horizontal ? categoryKey : undefined}
-            width={horizontal ? 96 : undefined}
+            // Nunca passar width={undefined}: com o jsx() do React 19 o
+            // undefined explícito chega ao Recharts, que mescla
+            // {...defaultProps, ...props} e perde a largura padrão (60) —
+            // o offset vira NaN e o gráfico some (sem eixo, grade nem barras).
+            width={horizontal ? 96 : 60}
             tick={{ fontSize: 12, fill: 'var(--muted-foreground)' }}
             axisLine={false}
             tickLine={false}

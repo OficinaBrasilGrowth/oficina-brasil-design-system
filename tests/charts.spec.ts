@@ -9,7 +9,7 @@ test('BarChart mostra barras verticais, horizontais e empilhadas com tabela aces
   ]) {
     await expect(page.getByRole('table', { name })).toHaveCount(1)
   }
-  await expect(page.locator('.recharts-bar-rectangle')).toHaveCount(24)
+  await expect(page.locator('.recharts-bar-rectangle path')).toHaveCount(24)
 })
 
 test('PieChart mostra pizza e donut com tabelas acessíveis', async ({ page }) => {
